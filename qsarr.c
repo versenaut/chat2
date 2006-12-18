@@ -65,7 +65,6 @@ void qsarr_insert(QSArr *qsa, void *element)
 			return;
 	qsa->data[qsa->size++] = element;
 	resort(qsa);
-	printf("qsa now has %u elements\n", qsa->size);
 }
 
 static int find(const QSArr *qsa, const void *key)
@@ -73,10 +72,10 @@ static int find(const QSArr *qsa, const void *key)
 	size_t	mn, mx, md;
 	int	c;
 
-	if(qsa == NULL || key == NULL)
+	if(qsa == NULL || qsa->size == 0)
 		return -1;
 
-	for(mn = 0, mx = qsa->size; mn <= mx;)
+	for(mn = 0, mx = qsa->size - 1; mn <= mx;)
 	{
 		md = (mn + mx) / 2;
 		c = qsa->cmp_key(qsa->data[md], key);
