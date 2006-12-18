@@ -8,6 +8,7 @@
 #include "verse.h"
 
 #include "channel.h"
+#include "nodedb.h"
 
 #if defined _WIN32
 #define	snprintf	_snprintf
@@ -111,11 +112,10 @@ static void cb_o_method_create(void *user, VNodeID node_id, uint16 group_id, uin
 	   strcmp(param_names[1], "speaker") == 0 &&
 	   strcmp(param_names[2], "text") == 0)
 	{
-		char	buf[128];
+		Node	*n;
 
-		printf("creating a new user-client for node %u\n", node_id);
-		snprintf(buf, sizeof buf, "client-%u", node_id);
-		user_verse_new(buf, node_id, group_id, method_id);
+		if((n = nodedb_lookup(node_id)) != NULL)
+			user_verse_new(nodedb_get_name(n), node_id, group_id, method_id);
 	}
 	else
 		printf("method %u.%u.%u %s() is no good\n", node_id, group_id, method_id, name);
@@ -149,14 +149,19 @@ static void cb_o_method_group_create(void *user, VNodeID node_id, uint16 group_i
 
 static void cb_node_name_set(void *user, VNodeID node_id, const char *name)
 {
-	printf("(node %u is named '%s')\n", node_id, name);
+	Node	*n;
+
+	if((n = nodedb_lookup(node_id)) != NULL)
+	{
+		nodedb_set_name(n, name);
+		printf("Set name of node %u to \"%s\"\n", node_id, name);
+	}
 }
 
 static void cb_node_create(void *user, VNodeID node_id, VNodeType type, VNodeOwner owner)
 {
 	MainInfo	*min = user;
 
-	printf("got node %u\n", node_id);
 	verse_send_node_subscribe(node_id);
 
 	if(node_id == min->avatar)
@@ -193,6 +198,7 @@ int main(int argc, char *argv[])
 	}
 
 	channel_init();
+	nodedb_init();
 	user_init();
 
 	min.chan_default = channel_new("");
