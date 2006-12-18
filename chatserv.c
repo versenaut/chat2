@@ -9,6 +9,10 @@
 
 #include "channel.h"
 
+#if defined _WIN32
+#define	snprintf	_snprintf
+#endif
+
 typedef struct {
 	const char	*ip;
 
