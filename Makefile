@@ -12,11 +12,13 @@ ALL:		$(ALL)
 
 # -------------------------------------------------------------
 
-chatserv:	chatserv.o channel.o qsarr.o user.o user-verse.o
+chatserv:	chatserv.o channel.o nodedb.o qsarr.o user.o user-verse.o
 
 chatserv.o:	chatserv.c
 
 channel.o:	channel.c channel.h
+
+nodedb.o:	nodedb.c nodedb.h
 
 qsarr.o:	qsarr.c qsarr.h
 

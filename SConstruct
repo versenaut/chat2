@@ -18,6 +18,7 @@ if sys.platform=='win32':
 
 server = ['chatserv.c',
 		'channel.c',
+		'nodedb.c',
 		'qsarr.c',
 		'user.c',
 		'user-verse.c']
