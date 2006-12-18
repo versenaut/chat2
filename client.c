@@ -6,6 +6,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+#ifdef _WIN32
+#include "winsock2.h"
+#endif
+
 #include "verse.h"
 
 typedef struct {
@@ -59,7 +63,7 @@ static const char * read_line(void)
 	return NULL;
 }
 
-static void send(MainInfo *min, const char *text)
+static void csend(MainInfo *min, const char *text)
 {
 	if(min->server != ~0u && text != NULL && text[0] != '\0')
 	{
@@ -88,7 +92,7 @@ static void mainloop(MainInfo *min)
 				min->running = 0;
 			else
 			{
-				send(min, line);
+				csend(min, line);
 			}
 		}
 	}
