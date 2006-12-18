@@ -52,7 +52,7 @@ Node * nodedb_new(VNodeID node_id)
 	if((n = malloc(sizeof *n)) != NULL)
 	{
 		n->node_id = node_id;
-		n->name[0] = '\0';
+		snprintf(n->name, sizeof n->name, "node-%u", node_id);
 		qsarr_insert(NodeInfo.nodes, n);
 	}
 	return n;
