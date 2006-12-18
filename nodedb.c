@@ -35,7 +35,9 @@ static int cmp_node_sort(const void **e1, const void **e2)
 
 static int cmp_node_key(const void *n, const void *key)
 {
-	return ((Node *) n)->node_id == (VNodeID) key;
+	const Node	*node = n;
+
+	return node->node_id < (VNodeID) key ? -1 : node->node_id > (VNodeID) key;
 }
 
 void nodedb_init(void)
@@ -51,16 +53,24 @@ Node * nodedb_new(VNodeID node_id)
 	{
 		n->node_id = node_id;
 		n->name[0] = '\0';
+		qsarr_insert(NodeInfo.nodes, n);
 	}
 	return n;
 }
 
 /* Like the server itself, this doesn't actually check against name collisions. */
-void nodedb_name_set(Node *node, const char *name)
+void nodedb_set_name(Node *node, const char *name)
 {
 	if(node == NULL || name == NULL)
 		return;
 	snprintf(node->name, sizeof node->name, "%s", name);
+}
+
+const char * nodedb_get_name(const Node *node)
+{
+	if(node == NULL)
+		return NULL;
+	return node->name;
 }
 
 Node * nodedb_lookup(VNodeID node_id)
