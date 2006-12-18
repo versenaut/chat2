@@ -63,7 +63,7 @@ static const char * read_line(void)
 	return NULL;
 }
 
-static void csend(MainInfo *min, const char *text)
+static void send_text(MainInfo *min, const char *text)
 {
 	if(min->server != ~0u && text != NULL && text[0] != '\0')
 	{
@@ -91,9 +91,7 @@ static void mainloop(MainInfo *min)
 			if(strcmp(line, "QUIT") == 0)
 				min->running = 0;
 			else
-			{
-				csend(min, line);
-			}
+				send_text(min, line);
 		}
 	}
 }
