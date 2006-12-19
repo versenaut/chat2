@@ -9,6 +9,7 @@
 
 #include "channel.h"
 #include "nodedb.h"
+#include "user-verse.h"
 
 #if defined _WIN32
 #define	snprintf	_snprintf
@@ -28,13 +29,9 @@ typedef struct {
 static int handle_command(MainInfo *min, const char *channel, User *speaker, const char *text)
 {
 	if(strcmp(text, "VerseListCommands") == 0)
-	{
 		user_hear(speaker, "", "server", "/VerseListCommands, /nick <nick>\n");
-	}
 	else if(strncmp(text, "nick ", 5) == 0)
-	{
-		printf("wanna be '%s'?\n", text + 5);
-	}
+		user_set_name(speaker, text + 5);
 	else
 	{
 		printf("Unknown command '%s'\n", text);
@@ -49,16 +46,18 @@ static void handle_hear(MainInfo *min, const char *channel, VNodeID sender, cons
 	User	*speaker;
 	User	*user;
 
-	if((speaker = user_verse_lookup(sender)) == NULL)
-		printf("bad sender\n");
+	if((speaker = user_verse_from_node_id(sender)) == NULL)
+	{
+		fprintf(stderr, "Got hear() from unknown user (node %u), ignoring\n", sender);
+		return;
+	}
 
 	if(text[0] == '/')	/* If it starts with a slash, it *might* be a command. Make sure. */
 	{
 		if(handle_command(min, channel, speaker, text + 1))
 			return;
 	}
-
-	printf("got \"%s\" in channel \"%s\" [%u users]\n", channel, text, user_count());
+	printf("got \"%s\" in channel \"%s\" [%u users]\n", text, channel, user_count());
 	for(i = 0; (user = user_index(i)) != NULL; i++)
 		user_hear(user, channel, user_get_name(speaker), text);
 }
@@ -125,10 +124,8 @@ static void cb_o_method_group_create(void *user, VNodeID node_id, uint16 group_i
 {
 	MainInfo	*min = user;
 
-	printf("node %u has method group %u, '%s'\n", node_id, group_id, name);
 	if(node_id == min->avatar)
 	{
-		printf("that's me ...\n");
 		if(strcmp(name, "chat_text") == 0 && min->group == (uint16) ~0u)
 		{
 			VNOParamType	say_ptype[] = { VN_O_METHOD_PTYPE_STRING, VN_O_METHOD_PTYPE_STRING };
@@ -136,7 +133,6 @@ static void cb_o_method_group_create(void *user, VNodeID node_id, uint16 group_i
 
 			min->group = group_id;
 			verse_send_o_method_group_subscribe(node_id, group_id);
-			printf(" my group is %u\n", min->group);
 			verse_send_o_method_create(min->avatar, min->group, (uint16) ~0u, "say", sizeof say_pname / sizeof *say_pname, say_ptype, say_pname);
 		}
 	}
@@ -162,19 +158,18 @@ static void cb_node_create(void *user, VNodeID node_id, VNodeType type, VNodeOwn
 {
 	MainInfo	*min = user;
 
+	nodedb_new(node_id);
 	verse_send_node_subscribe(node_id);
 
 	if(node_id == min->avatar)
-	{
 		verse_send_o_method_group_create(node_id, (uint16) ~0u, "chat_text");
-	}
 }
 
 static void cb_connect_accept(void *user, VNodeID avatar, const char *address, const uint8 *host)
 {
 	MainInfo	*min = user;
 
-	printf("connected as %u to '%s'\n", avatar, address);
+	printf("Connected as %u to '%s'\n", avatar, address);
 	min->avatar = avatar;
 	verse_send_node_index_subscribe(1 << V_NT_OBJECT);
 	verse_send_node_name_set(avatar, "chatserv");
