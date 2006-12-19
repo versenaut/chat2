@@ -28,13 +28,48 @@ typedef struct {
 
 static int handle_command(MainInfo *min, const char *channel, User *speaker, const char *text)
 {
-	if(strcmp(text, "VerseListCommands") == 0)
-		user_hear(speaker, "", "server", "/VerseListCommands, /nick <nick>\n");
-	else if(strncmp(text, "nick ", 5) == 0)
-		user_set_name(speaker, text + 5);
+	char	buf[2048];
+	size_t	len;
+
+	/* Copy command text into local buffer, chop of trailing whitespace. */
+	len = snprintf(buf, sizeof buf, "%s", text);
+	for(; len > 0 && isspace(buf[--len]);)
+		buf[len] = '\0';
+
+	if(strcmp(buf, "VerseListCommands") == 0)
+		user_hear(speaker, "", "server",
+			  "/VerseListCommands\n"
+			  "/nick\n"
+			  "/join\n"
+			  "/leave\n");
+	else if(strncmp(buf, "nick ", 5) == 0)
+		user_set_name(speaker, buf + 5);
+	else if(strncmp(buf, "join ", 5) == 0)
+	{
+		Channel	*ch;
+
+		if((ch = channel_lookup(buf + 5)) == NULL)
+			ch = channel_new(buf + 5);
+		if(ch != NULL)
+			channel_user_add(ch, speaker);
+	}
+	else if(strncmp(buf, "leave ", 6) == 0)
+	{
+		Channel	*ch;
+
+		if((ch = channel_lookup(buf + 6)) != NULL)
+		{
+			channel_user_remove(ch, speaker);
+			if(channel_size(ch) == 0)
+			{
+				printf("destroying channel %s, it's empty\n", buf + 6);
+				channel_destroy(ch);
+			}
+		}
+	}
 	else
 	{
-		printf("Unknown command '%s'\n", text);
+		printf("Unknown command '%s'\n", buf);
 		return 0;
 	}
 	return 1;
