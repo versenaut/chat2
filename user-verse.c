@@ -46,7 +46,7 @@ User * user_verse_new(const char *name, VNodeID node_id, uint16 group_id, uint16
 		uc->user.hear = user_verse_hear;	/* Set superclass' hear() method. */
 		if((n = nodedb_lookup(node_id)) != NULL)
 		{
-			if(nodedb_add_user_data(n, uc) == 0)
+			if(nodedb_add_user_data(n, uc) != 0)
 				fprintf(stderr, "**Error: user-verse got non-zero user data ID when attaching to node %u\n", node_id);
 		}
 		uc->node = n;
