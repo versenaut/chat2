@@ -16,7 +16,6 @@ static void user_verse_hear(User *user, const char *channel, const char *speaker
 	char		buf[1300];
 	size_t		len, to_go, chunk;
 
-	printf("calling hear() in %u.%u.%u\n", nodedb_get_id(uc->node), uc->group_id, uc->method_id);
 	for(to_go = len = strlen(text); to_go > 0; to_go -= chunk, text += chunk)	/* Split the text into chunks, if needed. Not very nice, but still. */
 	{
 		chunk = to_go > sizeof buf - 1 ? sizeof buf - 1 : to_go;

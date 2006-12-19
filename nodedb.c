@@ -83,7 +83,6 @@ const char * nodedb_get_name(const Node *node)
 
 Node * nodedb_lookup(VNodeID node_id)
 {
-	printf("looking up node %u\n", node_id);
 	return qsarr_lookup(NodeInfo.nodes, (void *) node_id);
 }
 
