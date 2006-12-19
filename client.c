@@ -8,6 +8,7 @@
 
 #ifdef _WIN32
 #include "winsock2.h"
+#define	snprintf	_snprintf
 #endif
 
 #include "verse.h"
@@ -71,10 +72,12 @@ static void send_text(MainInfo *min, const char *text)
 		VNOParamType	type[2];
 		VNOParam	value[2];
 		VNOPackedParams	*pp;
+		char		buf[1024];
 
 		type[0] = type[1] = VN_O_METHOD_PTYPE_STRING;
 		value[0].vstring = "";
-		value[1].vstring = (char *) text;
+		snprintf(buf, sizeof buf, "%s\n", text);
+		value[1].vstring = (char *) buf;
 		if((pp = verse_method_call_pack(sizeof type / sizeof *type, type, value)) != NULL)
 			verse_send_o_method_call(min->server, min->group, min->say, 0, pp);
 	}
@@ -112,7 +115,11 @@ static void cb_o_method_call(void *user, VNodeID node_id, uint16 group_id, uint1
 
 		if(verse_method_call_unpack(params, 3, type, value))
 		{
-			printf("[%s] %s: %s\n", value[0].vstring, value[1].vstring, value[2].vstring);
+			size_t	len = strlen(value[2].vstring);
+
+			printf("[%s] %s: %s", value[0].vstring, value[1].vstring, value[2].vstring);
+			if(value[2].vstring[len - 1] != '\n')
+				putchar('\n');
 		}
 	}
 }
@@ -163,7 +170,6 @@ static void cb_o_method_group_create(void *user, VNodeID node_id, uint16 group_i
 	if(node_id != min->avatar && strcmp(name, "chat_text") == 0)
 	{
 		verse_send_o_method_group_subscribe(node_id, group_id);
-		printf("subscribing to chat group in %u, hunting server\n", node_id);
 	}
 	else if(node_id == min->avatar && strcmp(name, "chat_text") == 0 && min->my_group == (uint16) ~0u)
 	{
