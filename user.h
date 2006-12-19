@@ -5,6 +5,8 @@
 #if !defined USER_H
 #define	USER_H
 
+#include <stdio.h>
+
 typedef struct User	User;
 
 /* This struct is public, for inheritance. */
