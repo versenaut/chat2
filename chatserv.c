@@ -94,6 +94,12 @@ static void handle_hear(MainInfo *min, const char *channel, VNodeID sender, cons
 		return;
 	}
 
+	if(!channel_user_is_member(ch, speaker))
+	{
+		fprintf(stderr, "Got hear() from non-channel member, igoring\n");
+		return;
+	}
+
 	if(text[0] == '/')	/* If it starts with a slash, it *might* be a command. Make sure. */
 	{
 		if(handle_command(min, channel, speaker, text + 1))
