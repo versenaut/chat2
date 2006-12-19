@@ -16,7 +16,7 @@ static void user_verse_hear(User *user, const char *channel, const char *speaker
 	char		buf[1300];
 	size_t		len, to_go, chunk;
 
-	printf("calling hear() in %u.%u.%u\n", uc->node_id, uc->group_id, uc->method_id);
+	printf("calling hear() in %u.%u.%u\n", nodedb_get_id(uc->node), uc->group_id, uc->method_id);
 	for(to_go = len = strlen(text); to_go > 0; to_go -= chunk, text += chunk)	/* Split the text into chunks, if needed. Not very nice, but still. */
 	{
 		chunk = to_go > sizeof buf - 1 ? sizeof buf - 1 : to_go;
@@ -29,7 +29,7 @@ static void user_verse_hear(User *user, const char *channel, const char *speaker
 		value[2].vstring = (char *) buf;
 
 		if((pp = verse_method_call_pack(3, type, value)) != NULL)
-			verse_send_o_method_call(uc->node_id, uc->group_id, uc->method_id, ~0, pp);
+			verse_send_o_method_call(nodedb_get_id(uc->node), uc->group_id, uc->method_id, ~0, pp);
 	}
 }
 
@@ -39,25 +39,32 @@ User * user_verse_new(const char *name, VNodeID node_id, uint16 group_id, uint16
 
 	if((uc = malloc(sizeof *uc)) != NULL)
 	{
+		Node	*n;
+
 		user_ctor(&uc->user, name);
-		uc->node_id = node_id;
 		uc->group_id = group_id;
 		uc->method_id = method_id;
-		uc->user.hear = user_verse_hear;
+		uc->user.hear = user_verse_hear;	/* Set superclass' hear() method. */
+		if((n = nodedb_lookup(node_id)) != NULL)
+		{
+			if(nodedb_add_user_data(n, uc) == 0)
+				fprintf(stderr, "**Error: user-verse got non-zero user data ID when attaching to node %u\n", node_id);
+		}
+		uc->node = n;
 	}
 	return (User *) uc;
 }
 
-/* This is O(n). Sad. */
-User * user_verse_lookup(VNodeID node_id)
+User * user_verse_from_node_id(VNodeID sender)
 {
-	unsigned int	i;
-	User		*u;
+	Node	*n;
 
-	for(i = 0; (u = user_index(i)) != NULL; i++)
+	if((n = nodedb_lookup(sender)) != NULL)
 	{
-		if(((UserClient *) u)->node_id == node_id)
-			return u;
+		UserClient	*uc;
+
+		if((uc = nodedb_get_user_data(n, 0)) != NULL)
+			return (User *) uc;
 	}
 	return NULL;
 }
