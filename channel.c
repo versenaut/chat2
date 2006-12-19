@@ -96,6 +96,13 @@ int channel_user_add(Channel *channel, User *user)
 	return 1;
 }
 
+int channel_user_is_member(const Channel *channel, const User *user)
+{
+	if(channel == NULL || user == NULL)
+		return 0;
+	return qsarr_lookup(channel->members, user) != NULL;
+}
+
 int channel_user_remove(Channel *channel, User *user)
 {
 	char	buf[128];

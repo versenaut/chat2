@@ -11,6 +11,7 @@ extern void		channel_destroy(Channel *channel);
 
 extern Channel *	channel_lookup(const char *name);
 extern int		channel_user_add(Channel *channel, User *user);
+extern int		channel_user_is_member(const Channel *channel, const User *user);
 extern int		channel_user_remove(Channel *channel, User *user);
 extern size_t		channel_size(const Channel *channel);
 
