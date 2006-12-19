@@ -18,6 +18,8 @@
 struct Node {
 	VNodeID	node_id;
 	char	name[32];
+	void	*user[4];
+	int	user_slot;
 };
 
 static struct {
@@ -54,8 +56,14 @@ Node * nodedb_new(VNodeID node_id)
 		n->node_id = node_id;
 		snprintf(n->name, sizeof n->name, "node-%u", node_id);
 		qsarr_insert(NodeInfo.nodes, n);
+		n->user_slot = 0;
 	}
 	return n;
+}
+
+VNodeID nodedb_get_id(const Node *node)
+{
+	return node != NULL ? node->node_id : ~0u;
 }
 
 /* Like the server itself, this doesn't actually check against name collisions. */
@@ -75,5 +83,22 @@ const char * nodedb_get_name(const Node *node)
 
 Node * nodedb_lookup(VNodeID node_id)
 {
+	printf("looking up node %u\n", node_id);
 	return qsarr_lookup(NodeInfo.nodes, (void *) node_id);
+}
+
+int nodedb_add_user_data(Node *node, const void *data)
+{
+	if(node == NULL)
+		return 0;
+	if(node->user_slot >= sizeof node->user / sizeof *node->user)
+		return -1;
+	node->user[node->user_slot++] = (void *) data;
+}
+
+void * nodedb_get_user_data(Node *node, int index)
+{
+	if(node == NULL || index < 0 || index >= node->user_slot)
+		return NULL;
+	return node->user[index];
 }
