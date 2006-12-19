@@ -14,6 +14,7 @@
 
 typedef struct {
 	const char	*ip;
+	const char	*name;
 	VNodeID		avatar;
 
 	VNodeID		server;
@@ -190,6 +191,7 @@ static void cb_connect_accept(void *user, VNodeID avatar, const char *address, c
 	printf("Connected as %u to '%s'\n", avatar, address);
 	verse_send_node_index_subscribe(1 << V_NT_OBJECT);
 	verse_send_o_method_group_create(avatar, (uint16) ~0u, "chat_text");
+	verse_send_node_name_set(avatar, min->name);
 }
 
 int main(int argc, char *argv[])
@@ -198,6 +200,7 @@ int main(int argc, char *argv[])
 	int		i;
 
 	min.ip = "localhost";
+	min.name = "chat";
 
 	min.avatar = ~0u;
 
@@ -210,6 +213,8 @@ int main(int argc, char *argv[])
 	{
 		if(strncmp(argv[i], "-ip=", 4) == 0)
 			min.ip = argv[i] + 4;
+		else if(strncmp(argv[i], "-name=", 6) == 0)
+			min.name = argv[i] + 6;
 		else
 			fprintf(stderr, "Ignoring unknown argument \"%s\"\n", argv[i]);
 	}
