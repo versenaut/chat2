@@ -48,7 +48,7 @@ const char * user_get_name(const User *user)
 	return user->name;
 }
 
-int user_rename(User *user, const char *name)
+int user_set_name(User *user, const char *name)
 {
 	if(user == NULL || name == NULL)
 		return;
