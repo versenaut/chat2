@@ -43,8 +43,15 @@ static int handle_command(MainInfo *min, const char *channel, User *speaker, con
 static void handle_hear(MainInfo *min, const char *channel, VNodeID sender, const char *text)
 {
 	size_t	i;
+	Channel	*ch;
 	User	*speaker;
 	User	*user;
+
+	if((ch = channel_lookup(channel)) == NULL)
+	{
+		fprintf(stderr, "Got hear() in unknown channel \"%s\", ignoring\n", channel);
+		return;
+	}
 
 	if((speaker = user_verse_from_node_id(sender)) == NULL)
 	{
@@ -57,9 +64,8 @@ static void handle_hear(MainInfo *min, const char *channel, VNodeID sender, cons
 		if(handle_command(min, channel, speaker, text + 1))
 			return;
 	}
-	printf("got \"%s\" in channel \"%s\" [%u users]\n", text, channel, user_count());
-	for(i = 0; (user = user_index(i)) != NULL; i++)
-		user_hear(user, channel, user_get_name(speaker), text);
+/*	printf("got \"%s\" in channel \"%s\" [%u users]\n", text, channel, channel_size(ch));*/
+	channel_hear(ch, speaker, text);
 }
 
 static void cb_o_method_call(void *user, VNodeID node_id, uint16 group_id, uint16 method_id, VNodeID sender, const VNOPackedParams *params)
@@ -114,7 +120,10 @@ static void cb_o_method_create(void *user, VNodeID node_id, uint16 group_id, uin
 		Node	*n;
 
 		if((n = nodedb_lookup(node_id)) != NULL)
-			user_verse_new(nodedb_get_name(n), node_id, group_id, method_id);
+		{
+			User	*u = user_verse_new(nodedb_get_name(n), node_id, group_id, method_id);
+			channel_user_add(min->chan_default, u);
+		}
 	}
 	else
 		printf("method %u.%u.%u %s() is no good\n", node_id, group_id, method_id, name);
