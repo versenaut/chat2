@@ -12,7 +12,7 @@
 
 struct QSArr {
 	void	**data;
-	size_t	size, alloc;
+	int	size, alloc;
 
 	int	(*cmp_sort)(const void **e1, const void **e2);
 	int	(*cmp_key)(const void *e, const void *key);
@@ -78,8 +78,7 @@ void qsarr_insert(QSArr *qsa, void *element)
 
 static int find(const QSArr *qsa, const void *key)
 {
-	size_t	mn, mx, md;
-	int	c;
+	int	mn, mx, md, c;
 
 	if(qsa == NULL || qsa->size == 0)
 		return -1;
@@ -88,6 +87,7 @@ static int find(const QSArr *qsa, const void *key)
 	{
 		md = (mn + mx) / 2;
 		c = qsa->cmp_key(qsa->data[md], key);
+/*		printf("mn=%u mx=%u -> md=%u, c=%d\n", mn, mx, md, c);*/
 		if(c == 0)
 			return (int) md;
 		if(c > 0)
