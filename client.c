@@ -1,5 +1,9 @@
 /*
+ * Simplistic command-line client for the Verse chat system, v2.
  * 
+ * Copyright (c) 2006 by PDC, KTH. Written by Emil Brink.
+ * 
+ * Licensed under the FreeBSD license.
 */
 
 #include <stdio.h>
