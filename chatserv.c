@@ -164,10 +164,7 @@ static void cb_o_method_group_create(void *user, VNodeID node_id, uint16 group_i
 		}
 	}
 	else if(strcmp(name, "chat_text") == 0)
-	{
-		printf(" subscribed\n");
 		verse_send_o_method_group_subscribe(node_id, group_id);
-	}
 }
 
 static void cb_node_name_set(void *user, VNodeID node_id, const char *name)
