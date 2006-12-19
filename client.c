@@ -72,12 +72,22 @@ static void send_text(MainInfo *min, const char *text)
 		VNOParamType	type[2];
 		VNOParam	value[2];
 		VNOPackedParams	*pp;
-		char		buf[1024];
+		char		buf[1024], *tab;
 
 		type[0] = type[1] = VN_O_METHOD_PTYPE_STRING;
-		value[0].vstring = "";
-		snprintf(buf, sizeof buf, "%s\n", text);
-		value[1].vstring = (char *) buf;
+		if((tab = strchr(text, '\t')) != NULL)
+		{
+			snprintf(buf, sizeof buf, "%s\n", text);
+			buf[tab - text] = '\0';
+			value[0].vstring = buf;
+			value[1].vstring = buf + (tab - text) + 1;
+		}
+		else
+		{
+			value[0].vstring = "";
+			snprintf(buf, sizeof buf, "%s\n", text);
+			value[1].vstring = (char *) buf;
+		}
 		if((pp = verse_method_call_pack(sizeof type / sizeof *type, type, value)) != NULL)
 			verse_send_o_method_call(min->server, min->group, min->say, 0, pp);
 	}
