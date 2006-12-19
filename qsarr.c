@@ -36,6 +36,15 @@ QSArr * qsarr_new(int (*cmp_sort)(const void **e1, const void **e2),
 	return qsa;
 }
 
+void qsarr_destroy(QSArr *qsa)
+{
+	if(qsa == NULL)
+		return;
+	if(qsa->data != NULL)
+		free(qsa->data);
+	free(qsa);
+}
+
 static int grow(QSArr *qsa)
 {
 	size_t	ns;

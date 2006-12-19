@@ -28,8 +28,6 @@ static int cmp_channel_sort(const void **a, const void **b)
 {
 	const Channel	*ca = *(Channel **) a, *cb = *(Channel **) b;
 
-	printf("comparing '%s' and '%s'\n", ca->name, cb->name);
-
 	return strcmp(ca->name, cb->name);
 }
 
@@ -68,6 +66,15 @@ Channel * channel_new(const char *name)
 	return ch;
 }
 
+void channel_destroy(Channel *channel)
+{
+	if(channel == NULL)
+		return;
+	qsarr_remove(ChannelInfo.channels, channel);
+	qsarr_destroy(channel->members);
+	free(channel);
+}
+
 Channel * channel_lookup(const char *name)
 {
 	return qsarr_lookup(ChannelInfo.channels, name);
@@ -85,14 +92,21 @@ int channel_user_add(Channel *channel, User *user)
 	/* Announce the new user. */
 	snprintf(buf, sizeof buf, "%s has joined channel \"%s\"\n", user_get_name(user), channel->name);
 	channel_hear(channel, NULL, buf);
+
 	return 1;
 }
 
 int channel_user_remove(Channel *channel, User *user)
 {
+	char	buf[128];
+
 	if(channel == NULL || user == NULL)
 		return 0;
 	qsarr_remove(channel->members, user);
+	/* Announce the dropout. */
+	snprintf(buf, sizeof buf, "%s has left channel \"%s\"\n", user_get_name(user), channel->name);
+	channel_hear(channel, NULL, buf);
+
 	return 1;
 }
 
