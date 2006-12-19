@@ -93,6 +93,7 @@ int nodedb_add_user_data(Node *node, const void *data)
 	if(node->user_slot >= sizeof node->user / sizeof *node->user)
 		return -1;
 	node->user[node->user_slot++] = (void *) data;
+	return node->user_slot - 1;
 }
 
 void * nodedb_get_user_data(Node *node, int index)
