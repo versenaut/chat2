@@ -1,5 +1,9 @@
 /*
+ * A Verse chat v2 protocol implementation.
  * 
+ * Copyright (c) 2006 PDC, KTH. Written by Emil Brink.
+ * 
+ * Released under a FreeBSD license.
 */
 
 #include <stdio.h>
@@ -26,52 +30,25 @@ typedef struct {
 
 /*------------------------------------------------------------------------------------------------ */
 
-static int handle_command(MainInfo *min, const char *channel, User *speaker, const char *text)
+static int handle_command(const char *channel, User *speaker, const char *text)
 {
-	char	buf[2048];
+	char	cmd[128], args[512], *put;
 	size_t	len;
 
-	/* Copy command text into local buffer, chop of trailing whitespace. */
-	len = snprintf(buf, sizeof buf, "%s", text);
-	for(; len > 0 && isspace(buf[--len]);)
-		buf[len] = '\0';
-
-	if(strcmp(buf, "VerseListCommands") == 0)
-		user_hear(speaker, "", "server",
-			  "/VerseListCommands\n"
-			  "/nick\n"
-			  "/join\n"
-			  "/leave\n");
-	else if(strncmp(buf, "nick ", 5) == 0)
-		user_set_name(speaker, buf + 5);
-	else if(strncmp(buf, "join ", 5) == 0)
-	{
-		Channel	*ch;
-
-		if((ch = channel_lookup(buf + 5)) == NULL)
-			ch = channel_new(buf + 5);
-		if(ch != NULL)
-			channel_user_add(ch, speaker);
-	}
-	else if(strncmp(buf, "leave ", 6) == 0)
-	{
-		Channel	*ch;
-
-		if((ch = channel_lookup(buf + 6)) != NULL)
-		{
-			channel_user_remove(ch, speaker);
-			if(channel_size(ch) == 0)
-			{
-				printf("destroying channel %s, it's empty\n", buf + 6);
-				channel_destroy(ch);
-			}
-		}
-	}
-	else
-	{
-		printf("Unknown command '%s'\n", buf);
+	/* Strip out first word, which is the command name. */
+	for(put = cmd; !isspace(*text) && put - cmd < sizeof cmd - 1;)
+		*put++ = *text++;
+	if(!isspace(*text))	/* Command very long? */
 		return 0;
-	}
+	*put = '\0';
+	while(isspace(*text))
+		text++;
+	/* Split out the arguments too, and chop off trailing whitespace. */
+	len = snprintf(args, sizeof args, "%s", text);
+	for(; len > 0 && isspace(args[--len]);)
+		args[len] = '\0';
+	command_run(command_lookup(cmd), channel_lookup(channel), speaker, args);
+
 	return 1;
 }
 
@@ -102,7 +79,7 @@ static void handle_hear(MainInfo *min, const char *channel, VNodeID sender, cons
 
 	if(text[0] == '/')	/* If it starts with a slash, it *might* be a command. Make sure. */
 	{
-		if(handle_command(min, channel, speaker, text + 1))
+		if(handle_command(channel, speaker, text))
 			return;
 	}
 /*	printf("got \"%s\" in channel \"%s\" [%u users]\n", text, channel, channel_size(ch));*/
@@ -243,6 +220,7 @@ int main(int argc, char *argv[])
 	}
 
 	channel_init();
+	command_init();
 	nodedb_init();
 	user_init();
 
