@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "user-verse.h"
+#include "user_verse.h"
 
 static void user_verse_hear(User *user, const char *channel, const char *speaker, const char *text)
 {

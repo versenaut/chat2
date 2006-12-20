@@ -13,7 +13,7 @@
 
 #include "channel.h"
 #include "nodedb.h"
-#include "user-verse.h"
+#include "user_verse.h"
 
 #if defined _WIN32
 #define	snprintf	_snprintf
