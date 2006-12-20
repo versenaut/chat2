@@ -20,6 +20,7 @@ struct Channel {
 
 static struct {
 	QSArr	*channels;
+	Channel	*def;		/* Default channel, named "" and always available. */
 } ChannelInfo;
 
 /*------------------------------------------------------------------------------------------------ */
@@ -39,6 +40,8 @@ static int cmp_channel_key(const void *a, const void *key)
 void channel_init(void)
 {
 	ChannelInfo.channels = qsarr_new(cmp_channel_sort, cmp_channel_key);
+
+	ChannelInfo.def = channel_new("");
 }
 
 static int cmp_user_sort(const void **a, const void **b)
@@ -51,6 +54,11 @@ static int cmp_user_sort(const void **a, const void **b)
 static int cmp_user_key(const void *a, const void *key)
 {
 	return a < key ? -1 : a > key;
+}
+
+Channel * channel_default(void)
+{
+	return ChannelInfo.def;
 }
 
 Channel * channel_new(const char *name)

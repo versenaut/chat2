@@ -6,6 +6,8 @@
 
 typedef struct Channel	Channel;
 
+extern Channel *	channel_default(void);
+
 extern Channel *	channel_new(const char *name);
 extern void		channel_destroy(Channel *channel);
 
