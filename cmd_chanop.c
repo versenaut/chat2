@@ -17,7 +17,7 @@ int cmd_join(Channel *channel, User *speaker, const char *text)
 
 	if((ch = channel_lookup(text)) == NULL)
 		ch = channel_new(text);
-	if(ch != NULL)
+	if(ch != NULL && !channel_is_default(ch))
 		channel_user_add(ch, speaker);
 	return ch != NULL;
 }
@@ -28,6 +28,8 @@ int cmd_leave(Channel *channel, User *speaker, const char *text)
 
 	if((ch = channel_lookup(text)) != NULL)
 	{
+		if(channel_is_default(ch))
+			return 1;
 		channel_user_remove(ch, speaker);
 		if(channel_size(ch) == 0)
 		{
