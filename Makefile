@@ -12,7 +12,7 @@ ALL:		$(ALL)
 
 # -------------------------------------------------------------
 
-chatserv:	chatserv.o channel.o cmd_chanop.o cmd_nick.o command.o nodedb.o qsarr.o user.o user-verse.o
+chatserv:	chatserv.o channel.o cmd_chanop.o cmd_nick.o command.o nodedb.o qsarr.o user.o user_verse.o
 
 chatserv.o:	chatserv.c
 
@@ -30,7 +30,7 @@ qsarr.o:	qsarr.c qsarr.h
 
 user.o:		user.c user.h
 
-user-verse.o:	user-verse.c user-verse.h user.h
+user_verse.o:	user_verse.c user_verse.h user.h
 
 # -------------------------------------------------------------
 
