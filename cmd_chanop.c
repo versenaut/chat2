@@ -65,7 +65,7 @@ int cmd_who(Channel *channel, User *speaker, const char *text)
 
 	for(i = 0; (u = channel_user_index(channel, i)) != NULL; i++)
 	{
-		snprintf(buf, sizeof buf, "/who %s: %s\n", channel_get_name(channel), user_get_name(u));
+		snprintf(buf, sizeof buf, "/who %s\n", user_get_name(u));
 		user_hear(speaker, channel_get_name(channel), "<server>", buf);
 	}
 	return 1;
