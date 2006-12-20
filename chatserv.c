@@ -12,6 +12,7 @@
 #include "verse.h"
 
 #include "channel.h"
+#include "command.h"
 #include "nodedb.h"
 #include "user_verse.h"
 
@@ -34,6 +35,7 @@ static int handle_command(const char *channel, User *speaker, const char *text)
 {
 	char	cmd[128], args[512], *put;
 	size_t	len;
+	Command	*c;
 
 	/* Strip out first word, which is the command name. */
 	for(put = cmd; !isspace(*text) && put - cmd < sizeof cmd - 1;)
@@ -47,9 +49,12 @@ static int handle_command(const char *channel, User *speaker, const char *text)
 	len = snprintf(args, sizeof args, "%s", text);
 	for(; len > 0 && isspace(args[--len]);)
 		args[len] = '\0';
-	command_run(command_lookup(cmd), channel_lookup(channel), speaker, args);
-
-	return 1;
+	if((c = command_lookup(cmd)) != NULL)
+	{
+		command_run(c, channel_lookup(channel), speaker, args);
+		return 1;
+	}
+	return 0;
 }
 
 static void handle_hear(MainInfo *min, const char *channel, VNodeID sender, const char *text)
