@@ -62,6 +62,7 @@ void command_init(void)
 	command_new("/nick", "Set nickname", "string(name)", "Set a new nickname.", cmd_nick);
 	command_new("/join", "Join channel", "channel(channel)", "Join a channel, which is created if it does not exist.", cmd_join);
 	command_new("/leave", "Leave channel", "channel(channel)", "Leave a channel, which is destroyed if it becomes empty.", cmd_leave);
+	command_new("/listchan", "List channels", "none", "List available channels, by name.", cmd_listchan);
 }
 
 Command * command_new(const char *name, const char *label,
