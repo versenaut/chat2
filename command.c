@@ -99,16 +99,20 @@ int command_run(Command *cmd, Channel *channel, User *speaker, const char *text)
 	return cmd->handler(channel, speaker, text);
 }
 
+/* Format a command for list output. */
 static const char * list_format(const Command *cmd)
 {
 	static char	buf[3072];
 
 	if(snprintf(buf, sizeof buf, "/VerseCommandList: %s \"%s\" %s \"%s\"\n",
 		   cmd->name, cmd->label, cmd->args, cmd->desc) < sizeof buf)
+	{
 		return buf;
+	}
 	return NULL;
 }
 
+/* Send list of registered commands to the given user. */
 void command_send_list(User *user)
 {
 	int	i;
