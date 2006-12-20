@@ -9,6 +9,8 @@ typedef struct Channel	Channel;
 extern Channel *	channel_new(const char *name);
 extern void		channel_destroy(Channel *channel);
 
+extern const char *	channel_get_name(const Channel *channel);
+
 extern Channel *	channel_index(int index);
 extern Channel *	channel_lookup(const char *name);
 extern int		channel_user_add(Channel *channel, User *user);
