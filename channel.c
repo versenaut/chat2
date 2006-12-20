@@ -21,7 +21,7 @@ struct Channel {
 static struct {
 	QSArr	*channels;
 	Channel	*def;		/* Default channel, named "" and always available. */
-} ChannelInfo;
+} ChannelInfo = { NULL, NULL };
 
 /*------------------------------------------------------------------------------------------------ */
 
@@ -85,7 +85,7 @@ void channel_destroy(Channel *channel)
 
 int channel_is_default(const Channel *channel)
 {
-	return channel != NULL ? channel->name[0] == '\0' : 0;
+	return channel == ChannelInfo.def;
 }
 
 const char * channel_get_name(const Channel *channel)
