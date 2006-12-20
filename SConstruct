@@ -18,10 +18,13 @@ if sys.platform=='win32':
 
 server = ['chatserv.c',
 		'channel.c',
+		'cmd_nick.c',
+		'cmd_chanop.c',
+		'command.c',
 		'nodedb.c',
 		'qsarr.c',
 		'user.c',
-		'user-verse.c']
+		'user_verse.c']
 
 client = ['client.c']
 
