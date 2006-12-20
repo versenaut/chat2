@@ -126,6 +126,13 @@ int channel_user_is_member(const Channel *channel, const User *user)
 	return qsarr_lookup(channel->members, user) != NULL;
 }
 
+User * channel_user_index(const Channel *channel, int index)
+{
+	if(channel == NULL)
+		return NULL;
+	return qsarr_index(channel->members, index);
+}
+
 int channel_user_remove(Channel *channel, User *user)
 {
 	char	buf[128];
