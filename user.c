@@ -65,6 +65,13 @@ User * user_index(unsigned int index)
 	return qsarr_index(UserInfo.users, index);
 }
 
+User * user_lookup(const char *name)
+{
+	if(name == NULL)
+		return NULL;
+	return qsarr_lookup(UserInfo.users, name);
+}
+
 void user_hear(const User *user, const char *channel, const char *speaker, const char *text)
 {
 	if(user == NULL || channel == NULL || speaker == NULL || text == NULL)

@@ -26,6 +26,7 @@ extern void		user_destroy(User *user);
 extern size_t		user_count(void);
 
 extern User *		user_index(unsigned int index);
+extern User *		user_lookup(const char *name);
 
 extern void		user_hear(const User *user, const char *channel, const char *speaker, const char *text);
 
