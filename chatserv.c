@@ -24,7 +24,6 @@ typedef struct {
 	const char	*ip;
 
 	VNodeID		avatar;
-	Channel		*chan_default;
 
 	uint16		group, say;
 } MainInfo;
@@ -145,7 +144,7 @@ static void cb_o_method_create(void *user, VNodeID node_id, uint16 group_id, uin
 		if((n = nodedb_lookup(node_id)) != NULL)
 		{
 			User	*u = user_verse_new(nodedb_get_name(n), node_id, group_id, method_id);
-			channel_user_add(min->chan_default, u);
+			channel_user_add(channel_default(), u);
 			printf("User \"%s\" (node %u) recognized\n", nodedb_get_name(n), node_id);
 		}
 	}
@@ -223,8 +222,6 @@ int main(int argc, char *argv[])
 	command_init();
 	nodedb_init();
 	user_init();
-
-	min.chan_default = channel_new("");
 
 	verse_callback_set((void *) verse_send_connect_accept,		(void *) cb_connect_accept,		&min);
 	verse_callback_set((void *) verse_send_node_create,		(void *) cb_node_create,		&min);
