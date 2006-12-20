@@ -7,6 +7,10 @@
 
 #include "cmd_chanop.h"
 
+#if defined _WIN32
+#define	snprintf	_snprintf
+#endif
+
 int cmd_join(Channel *channel, User *speaker, const char *text)
 {
 	Channel	*ch;
@@ -33,4 +37,20 @@ int cmd_leave(Channel *channel, User *speaker, const char *text)
 		return 1;
 	}
 	return 0;
+}
+
+int cmd_listchan(Channel *channel, User *speaker, const char *text)
+{
+	char	buf[128];
+	int	i;
+	Channel	*ch;
+
+	for(i = 0; (ch = channel_index(i)) != NULL; i++)
+	{
+		if(channel_is_default(ch))
+			continue;
+		snprintf(buf, sizeof buf, "/listchan: %s\n", channel_get_name(ch));
+		user_hear(speaker, "", "<server>", buf);
+	}
+	return 1;
 }
