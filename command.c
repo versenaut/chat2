@@ -106,7 +106,7 @@ static const char * list_format(const Command *cmd)
 {
 	static char	buf[3072];
 
-	if(snprintf(buf, sizeof buf, "/VerseCommandList: %s \"%s\" %s \"%s\"\n",
+	if(snprintf(buf, sizeof buf, "/VerseListCommands: %s \"%s\" %s \"%s\"\n",
 		   cmd->name, cmd->label, cmd->args, cmd->desc) < sizeof buf)
 	{
 		return buf;
