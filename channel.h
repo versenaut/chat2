@@ -9,6 +9,7 @@ typedef struct Channel	Channel;
 extern Channel *	channel_new(const char *name);
 extern void		channel_destroy(Channel *channel);
 
+extern int		channel_is_default(const Channel *channel);
 extern const char *	channel_get_name(const Channel *channel);
 
 extern Channel *	channel_index(int index);

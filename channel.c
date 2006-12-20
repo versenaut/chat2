@@ -75,6 +75,11 @@ void channel_destroy(Channel *channel)
 	free(channel);
 }
 
+int channel_is_default(const Channel *channel)
+{
+	return channel != NULL ? channel->name[0] == '\0' : 0;
+}
+
 const char * channel_get_name(const Channel *channel)
 {
 	return channel != NULL ? channel->name : NULL;
