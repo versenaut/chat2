@@ -54,3 +54,17 @@ int cmd_listchan(Channel *channel, User *speaker, const char *text)
 	}
 	return 1;
 }
+
+int cmd_who(Channel *channel, User *speaker, const char *text)
+{
+	char	buf[128];
+	int	i;
+	User	*u;
+
+	for(i = 0; (u = channel_user_index(channel, i)) != NULL; i++)
+	{
+		snprintf(buf, sizeof buf, "/who %s: %s\n", channel_get_name(channel), user_get_name(u));
+		user_hear(speaker, channel_get_name(channel), "<server>", buf);
+	}
+	return 1;
+}
