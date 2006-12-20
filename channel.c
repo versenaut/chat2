@@ -75,6 +75,11 @@ void channel_destroy(Channel *channel)
 	free(channel);
 }
 
+Channel * channel_index(int index)
+{
+	return qsarr_index(ChannelInfo.channels, index);
+}
+
 Channel * channel_lookup(const char *name)
 {
 	return qsarr_lookup(ChannelInfo.channels, name);
