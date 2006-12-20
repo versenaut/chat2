@@ -85,7 +85,7 @@ void channel_destroy(Channel *channel)
 
 int channel_is_default(const Channel *channel)
 {
-	return channel == ChannelInfo.def;
+	return channel != NULL && channel == ChannelInfo.def;
 }
 
 const char * channel_get_name(const Channel *channel)
