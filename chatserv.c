@@ -31,6 +31,7 @@ typedef struct {
 
 /*------------------------------------------------------------------------------------------------ */
 
+/* Try to run the <text> as a command. Returns 1 if the text boiled down to a known command, 0 if not. */
 static int handle_command(const char *channel, User *speaker, const char *text)
 {
 	char	cmd[128], args[512], *put;
@@ -85,9 +86,8 @@ static void handle_hear(MainInfo *min, const char *channel, VNodeID sender, cons
 	if(text[0] == '/')	/* If it starts with a slash, it *might* be a command. Make sure. */
 	{
 		if(handle_command(channel, speaker, text))
-			return;
+			return;	/* If command was recognized, we're done. */
 	}
-/*	printf("got \"%s\" in channel \"%s\" [%u users]\n", text, channel, channel_size(ch));*/
 	channel_hear(ch, speaker, text);
 }
 
@@ -124,7 +124,7 @@ static void cb_o_method_create(void *user, VNodeID node_id, uint16 group_id, uin
 			if(min->say == (uint16) ~0u)
 			{
 				min->say = method_id;
-				printf("server say is %u.%u.%u\n", node_id, group_id, method_id);
+				printf("Server registered, ready to receive data\n");
 			}
 		}
 		return;
@@ -146,6 +146,7 @@ static void cb_o_method_create(void *user, VNodeID node_id, uint16 group_id, uin
 		{
 			User	*u = user_verse_new(nodedb_get_name(n), node_id, group_id, method_id);
 			channel_user_add(min->chan_default, u);
+			printf("User \"%s\" (node %u) recognized\n", nodedb_get_name(n), node_id);
 		}
 	}
 	else
@@ -177,10 +178,7 @@ static void cb_node_name_set(void *user, VNodeID node_id, const char *name)
 	Node	*n;
 
 	if((n = nodedb_lookup(node_id)) != NULL)
-	{
 		nodedb_set_name(n, name);
-		printf("Set name of node %u to \"%s\"\n", node_id, name);
-	}
 }
 
 static void cb_node_create(void *user, VNodeID node_id, VNodeType type, VNodeOwner owner)
@@ -198,7 +196,7 @@ static void cb_connect_accept(void *user, VNodeID avatar, const char *address, c
 {
 	MainInfo	*min = user;
 
-	printf("Connected as %u to '%s'\n", avatar, address);
+	printf("Connected as %u to %s\n", avatar, address);
 	min->avatar = avatar;
 	verse_send_node_index_subscribe(1 << V_NT_OBJECT);
 	verse_send_node_name_set(avatar, "chatserv");
