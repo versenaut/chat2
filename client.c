@@ -71,7 +71,7 @@ static const char * read_line(void)
 
 static void send_text(MainInfo *min, const char *text)
 {
-	if(min->server != ~0u && text != NULL)
+	if(min->server != ~0u && min->group != (uint16) ~0u && min->say != (uint16) ~0u && text != NULL)
 	{
 		VNOParamType	type[2];
 		VNOParam	value[2];
