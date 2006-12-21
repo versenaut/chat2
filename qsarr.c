@@ -13,6 +13,8 @@
 struct QSArr {
 	void	**data;
 	int	size, alloc;
+	int	frozen;
+	int	dirty : 1;
 
 	int	(*cmp_sort)(const void **e1, const void **e2);
 	int	(*cmp_key)(const void *e, const void *key);
@@ -30,6 +32,8 @@ QSArr * qsarr_new(int (*cmp_sort)(const void **e1, const void **e2),
 		qsa->data = NULL;
 		qsa->size = 0;
 		qsa->alloc = 0;
+		qsa->frozen = 0;
+		qsa->dirty = 0;
 		qsa->cmp_sort = cmp_sort;
 		qsa->cmp_key = cmp_key;
 	}
@@ -73,7 +77,25 @@ void qsarr_insert(QSArr *qsa, void *element)
 		if(!grow(qsa))
 			return;
 	qsa->data[qsa->size++] = element;
-	resort(qsa);
+	if(qsa->frozen == 0)
+		resort(qsa);
+	else
+		qsa->dirty = 1;
+}
+
+void qsarr_freeze(QSArr *qsa)
+{
+	qsa->frozen++;
+}
+
+void qsarr_thaw(QSArr *qsa)
+{
+	if(--qsa->frozen == 0)
+	{
+		if(qsa->dirty)
+			resort(qsa);
+		qsa->dirty = 0;
+	}
 }
 
 static int find(const QSArr *qsa, const void *key)
@@ -117,7 +139,12 @@ void qsarr_remove(QSArr *qsa, const void *key)
 			qsa->data[index] = qsa->data[qsa->size - 1];
 		qsa->size--;
 		if(qsa->size > 1)
-			resort(qsa);
+		{
+			if(qsa->frozen == 0)
+				resort(qsa);
+			else
+				qsa->dirty = 1;
+		}
 	}
 }
 

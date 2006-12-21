@@ -13,4 +13,7 @@ extern void	qsarr_set_comparison_function(QSArr *qsa, int (*cmp)(void *a, void *
 extern void *	qsarr_lookup(const QSArr *qsa, const void *key);
 extern void *	qsarr_index(const QSArr *qsa, unsigned int index);
 
+extern void	qsarr_freeze(QSArr *qsa);
+extern void	qsarr_thaw(QSArr *qsa);
+
 extern size_t	qsarr_size(const QSArr *qsa);
