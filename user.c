@@ -8,6 +8,10 @@
 #include "user.h"
 #include "qsarr.h"
 
+#if defined _WIN32
+#define	snprintf	_snprintf
+#endif
+
 /*------------------------------------------------------------------------------------------------ */
 
 #define	NAME_SERVER	"<server>"
@@ -46,7 +50,7 @@ void user_ctor(User *user, const char *name)
 {
 	if(user == NULL || name == NULL)
 		return;
-	strcpy(user->name, name);
+	snprintf(user->name, sizeof user->name, "%s", name);
 	qsarr_insert(UserInfo.users, user);
 }
 
@@ -61,7 +65,7 @@ int user_set_name(User *user, const char *name)
 {
 	if(user == NULL || name == NULL)
 		return;
-	strcpy(user->name, name);
+	snprintf(user->name, sizeof user->name, "%s", name);
 }
 
 size_t user_count(void)
