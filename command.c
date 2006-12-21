@@ -126,7 +126,7 @@ void command_send_list(User *user)
 	{
 		const char	*list = list_format(cmd);
 		if(list != NULL)
-			user_hear(user, "", "<server>", list);
+			user_hear(user, "", NULL, list);
 		else
 			fprintf(stderr, "Can't list command '%s', too long\n", cmd->name);
 	}

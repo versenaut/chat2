@@ -74,7 +74,9 @@ User * user_lookup(const char *name)
 
 void user_hear(const User *user, const char *channel, const char *speaker, const char *text)
 {
-	if(user == NULL || channel == NULL || speaker == NULL || text == NULL)
+	if(user == NULL || channel == NULL || text == NULL)
 		return;
+	if(speaker == NULL)
+		speaker = "<server>";
 	user->hear((User *) user, channel, speaker, text);
 }

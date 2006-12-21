@@ -160,7 +160,7 @@ void channel_hear(Channel *channel, const User *speaker, const char *text)
 
 	if(channel == NULL || text == NULL)
 		return;
-	spk = speaker != NULL ? user_get_name(speaker) : "<server>";
+	spk = user_get_name(speaker);	/* Does the right thing for a NULL User. */
 	for(i = 0; (u = qsarr_index(channel->members, i)) != NULL; i++)
 		user_hear(u, channel->name, spk, text);
 }

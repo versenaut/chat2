@@ -49,7 +49,7 @@ int cmd_listchan(Channel *channel, User *speaker, const char *text)
 		if(channel_is_default(ch))
 			continue;
 		snprintf(buf, sizeof buf, "/listchan: %s\n", channel_get_name(ch));
-		user_hear(speaker, "", "<server>", buf);
+		user_hear(speaker, "", NULL, buf);
 	}
 	return 1;
 }
@@ -63,7 +63,7 @@ int cmd_who(Channel *channel, User *speaker, const char *text)
 	for(i = 0; (u = channel_user_index(channel, i)) != NULL; i++)
 	{
 		snprintf(buf, sizeof buf, "/who %s\n", user_get_name(u));
-		user_hear(speaker, channel_get_name(channel), "<server>", buf);
+		user_hear(speaker, channel_get_name(channel), NULL, buf);
 	}
 	return 1;
 }
