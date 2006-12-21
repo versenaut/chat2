@@ -71,7 +71,7 @@ static const char * read_line(void)
 
 static void send_text(MainInfo *min, const char *text)
 {
-	if(min->server != ~0u && text != NULL && text[0] != '\0')
+	if(min->server != ~0u && text != NULL)
 	{
 		VNOParamType	type[2];
 		VNOParam	value[2];
@@ -93,7 +93,7 @@ static void send_text(MainInfo *min, const char *text)
 			value[1].vstring = (char *) buf;
 		}
 		if((pp = verse_method_call_pack(sizeof type / sizeof *type, type, value)) != NULL)
-			verse_send_o_method_call(min->server, min->group, min->say, 0, pp);
+			verse_send_o_method_call(min->server, min->group, min->say, ~0u, pp);
 	}
 }
 
@@ -108,7 +108,7 @@ static void mainloop(MainInfo *min)
 		{
 			if(strcmp(line, "QUIT") == 0)
 				min->running = 0;
-			else
+			else if(line[0] != '\0')
 				send_text(min, line);
 		}
 	}
