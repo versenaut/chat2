@@ -10,6 +10,8 @@
 
 /*------------------------------------------------------------------------------------------------ */
 
+#define	NAME_SERVER	"<server>"
+
 static struct {
 	QSArr	*users;
 } UserInfo;
@@ -31,6 +33,13 @@ static int cmp_user_key(const void *u, const void *key)
 void user_init(void)
 {
 	UserInfo.users = qsarr_new(cmp_user_sort, cmp_user_key);
+}
+
+int user_name_is_valid(const char *name)
+{
+	if(name == NULL)
+		return 0;
+	return strncmp(name, NAME_SERVER, strlen(NAME_SERVER)) != 0;
 }
 
 void user_ctor(User *user, const char *name)
@@ -77,6 +86,6 @@ void user_hear(const User *user, const char *channel, const char *speaker, const
 	if(user == NULL || channel == NULL || text == NULL)
 		return;
 	if(speaker == NULL)
-		speaker = "<server>";
+		speaker = NAME_SERVER;
 	user->hear((User *) user, channel, speaker, text);
 }
