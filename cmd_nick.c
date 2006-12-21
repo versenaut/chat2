@@ -17,7 +17,7 @@ int cmd_nick(Channel *channel, User *speaker, const char *text)
 	Channel	*ch;
 	char	buf[256];
 
-	if(strncmp(text, "<server>", 8) == 0)	/* Disallow the reserved server name. */
+	if(!user_name_is_valid(text))
 		return 0;
 
 	if(user_lookup(text) != NULL)		/* Refuse if nick is in use. */
