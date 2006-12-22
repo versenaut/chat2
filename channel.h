@@ -14,6 +14,9 @@ extern void		channel_destroy(Channel *channel);
 extern int		channel_is_default(const Channel *channel);
 extern const char *	channel_get_name(const Channel *channel);
 
+extern void		channel_set_topic(Channel *channel, const char *topic);
+extern const char *	channel_get_topic(const Channel *channel);
+
 extern Channel *	channel_index(int index);
 extern Channel *	channel_lookup(const char *name);
 extern int		channel_user_add(Channel *channel, User *user);

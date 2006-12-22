@@ -13,6 +13,7 @@
 
 struct Channel {
 	char	name[64];
+	char	topic[256];
 	QSArr	*members;	
 };
 
@@ -66,8 +67,9 @@ Channel * channel_new(const char *name)
 	if((ch = malloc(sizeof *ch)) != NULL)
 	{
 		snprintf(ch->name, sizeof ch->name, "%s", name);
-		qsarr_insert(ChannelInfo.channels, ch);
+		ch->topic[0] = '\0';
 		ch->members = qsarr_new(cmp_user_sort, cmp_user_key);
+		qsarr_insert(ChannelInfo.channels, ch);
 	}
 	return ch;
 }
@@ -91,6 +93,29 @@ const char * channel_get_name(const Channel *channel)
 	return channel != NULL ? channel->name : NULL;
 }
 
+void channel_set_topic(Channel *channel, const char *topic)
+{
+	if(channel != NULL && topic != NULL)
+	{
+		snprintf(channel->topic, sizeof channel->topic, "%s", topic);
+		if(qsarr_size(channel->members) > 0)
+		{
+			char	buf[256];
+			int	i;
+			User	*u;
+
+			snprintf(buf, sizeof buf, "/topic \"%s\"\n", channel->topic);
+			for(i = 0; (u = channel_user_index(channel, i)) != NULL; i++)
+				user_hear(u, channel->name, NULL, buf);
+		}
+	}
+}
+
+const char * channel_get_topic(const Channel *channel)
+{
+	return channel != NULL ? channel->topic : NULL;
+}
+
 Channel * channel_index(int index)
 {
 	return qsarr_index(ChannelInfo.channels, index);
@@ -103,7 +128,7 @@ Channel * channel_lookup(const char *name)
 
 int channel_user_add(Channel *channel, User *user)
 {
-	char	buf[128];
+	char	buf[256];
 
 	if(channel == NULL || user == NULL)
 		return 0;
@@ -113,7 +138,11 @@ int channel_user_add(Channel *channel, User *user)
 	/* Announce the new user. */
 	snprintf(buf, sizeof buf, "%s has joined channel \"%s\"\n", user_get_name(user), channel->name);
 	channel_hear(channel, NULL, buf);
-
+	if(channel->topic[0] != '\0')
+	{
+		snprintf(buf, sizeof buf, "/topic \"%s\"\n", channel->topic);
+		user_hear(user, channel->name, NULL, buf);
+	}
 	return 1;
 }
 
