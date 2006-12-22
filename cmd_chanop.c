@@ -65,3 +65,10 @@ int cmd_who(Channel *channel, User *speaker, const char *text)
 	}
 	return 1;
 }
+
+int cmd_topic(Channel *channel, User *speaker, const char *text)
+{
+	channel_set_topic(channel, text);
+
+	return 1;
+}
