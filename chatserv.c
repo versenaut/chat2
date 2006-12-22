@@ -60,7 +60,10 @@ static int handle_command(const char *channel, User *speaker, const char *text)
 	return 0;
 }
 
-static void handle_hear(MainInfo *min, const char *channel, VNodeID sender, const char *text)
+/* Handle incoming text, from the say() method. Checks for commands and tries to run them,
+ * while just echoing any text to all channel members.
+*/
+static void handle_say(MainInfo *min, const char *channel, VNodeID sender, const char *text)
 {
 	Channel	*ch;
 	User	*speaker;
@@ -91,6 +94,7 @@ static void handle_hear(MainInfo *min, const char *channel, VNodeID sender, cons
 	channel_hear(ch, speaker, text);
 }
 
+/* Handle method invocation. We only publish a single method, so it's not a lot to do here. */
 static void cb_o_method_call(void *user, VNodeID node_id, uint16 group_id, uint16 method_id, VNodeID sender, const VNOPackedParams *params)
 {
 	MainInfo	*min = user;
@@ -103,10 +107,13 @@ static void cb_o_method_call(void *user, VNodeID node_id, uint16 group_id, uint1
 		VNOParam	value[2];
 
 		if(verse_method_call_unpack(params, sizeof type / sizeof *type, type, value))
-			handle_hear(min, value[0].vstring, sender, value[1].vstring);
+			handle_say(min, value[0].vstring, sender, value[1].vstring);
 	}
 }
 
+/* A method was created. If in our avatar, it might be the say() method, so look for that. If in someone else,
+ * it might be the hear() method that blesses random clients into being chat users, so look for that too.
+*/
 static void cb_o_method_create(void *user, VNodeID node_id, uint16 group_id, uint16 method_id, const char *name, uint8 param_count, const VNOParamType *param_types, const char * * param_names)
 {
 	MainInfo	*min = user;
@@ -224,6 +231,7 @@ int main(int argc, char *argv[])
 			fprintf(stderr, "chatserv: Ignoring argument \"%s\"\n", argv[i]);
 	}
 
+	/* Initialize various modules. */
 	channel_init();
 	command_init();
 	nodedb_init();
