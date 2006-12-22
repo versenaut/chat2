@@ -6,8 +6,10 @@
  * Released under a FreeBSD license.
 */
 
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "verse.h"
 
@@ -60,10 +62,8 @@ static int handle_command(const char *channel, User *speaker, const char *text)
 
 static void handle_hear(MainInfo *min, const char *channel, VNodeID sender, const char *text)
 {
-	size_t	i;
 	Channel	*ch;
 	User	*speaker;
-	User	*user;
 
 	if((ch = channel_lookup(channel)) == NULL)
 	{
