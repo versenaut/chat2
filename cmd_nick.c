@@ -2,14 +2,12 @@
  * A simple command to implement nickname-setting.
 */
 
+#include "chat2.h"
+
 #include "channel.h"
 #include "user.h"
 
 #include "cmd_nick.h"
-
-#if defined _WIN32
-#define	snprintf	_snprintf
-#endif
 
 int cmd_nick(Channel *channel, User *speaker, const char *text)
 {

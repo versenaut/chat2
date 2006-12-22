@@ -5,12 +5,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "chat2.h"
+
 #include "user.h"
 #include "qsarr.h"
-
-#if defined _WIN32
-#define	snprintf	_snprintf
-#endif
 
 /*------------------------------------------------------------------------------------------------ */
 

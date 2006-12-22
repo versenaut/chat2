@@ -11,16 +11,12 @@
 
 #include "verse.h"
 
+#include "chat2.h"
+
 #include "channel.h"
 #include "command.h"
 #include "nodedb.h"
 #include "user_verse.h"
-
-#if defined _WIN32
-#define	snprintf	_snprintf
-#endif
-
-#define	VERSION	"0.1"
 
 typedef struct {
 	const char	*ip;

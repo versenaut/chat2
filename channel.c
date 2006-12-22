@@ -6,12 +6,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "chat2.h"
+
 #include "channel.h"
 #include "qsarr.h"
-
-#if defined _WIN32
-#define	snprintf	_snprintf
-#endif
 
 struct Channel {
 	char	name[64];

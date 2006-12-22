@@ -2,14 +2,12 @@
  * Channel operations, i.e. join and leave channels.
 */
 
+#include "chat2.h"
+
 #include "channel.h"
 #include "user.h"
 
 #include "cmd_chanop.h"
-
-#if defined _WIN32
-#define	snprintf	_snprintf
-#endif
 
 int cmd_join(Channel *channel, User *speaker, const char *text)
 {

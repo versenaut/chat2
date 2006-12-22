@@ -7,13 +7,11 @@
 
 #include "verse.h"
 
+#include "chat2.h"
+
 #include "qsarr.h"
 
 #include "nodedb.h"
-
-#if defined _WIN32
-#define	snprintf	_snprintf
-#endif
 
 struct Node {
 	VNodeID	node_id;
