@@ -8,6 +8,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "chat2.h"
+
 #include "channel.h"
 #include "qsarr.h"
 #include "user.h"
@@ -15,10 +17,7 @@
 #include "command.h"
 #include "cmd_chanop.h"
 #include "cmd_nick.h"
-
-#if defined _WIN32
-#define	snprintf	_snprintf
-#endif
+#include "cmd_version.h"
 
 struct Command {
 	char	name[32];
@@ -63,6 +62,7 @@ void command_init(void)
 	command_new("/join", "Join channel", "channel(channel)", "Join a channel, which is created if it does not exist.", cmd_join);
 	command_new("/leave", "Leave channel", "channel(channel)", "Leave a channel, which is destroyed if it becomes empty.", cmd_leave);
 	command_new("/listchan", "List channels", "none", "List available channels, by name.", cmd_listchan);
+	command_new("/version", "Check server version", "none", "Check the version of the chat server.", cmd_version);
 	command_new("/who", "List users in channel", "none", "List the users in the addressed channel.", cmd_who);
 }
 
