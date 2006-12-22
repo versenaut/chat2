@@ -2,7 +2,7 @@
 #
 #
 
-CFLAGS=-I../verse -g
+CFLAGS=-I../verse -g -Wall
 LDFLAGS=-L../verse
 LDLIBS=-lverse
 
