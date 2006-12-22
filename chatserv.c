@@ -47,10 +47,13 @@ static int handle_command(const char *channel, User *speaker, const char *text)
 	len = snprintf(args, sizeof args, "%s", text);
 	for(; len > 0 && isspace(args[--len]);)
 		args[len] = '\0';
-	if((c = command_lookup(cmd)) != NULL)
+	if(cmd[0] == '/')	/* Does it look like a command? This server uses / for commands. */
 	{
-		command_run(c, channel_lookup(channel), speaker, args);
-		return 1;
+		if((c = command_lookup(cmd)) != NULL)
+		{
+			command_run(c, channel_lookup(channel), speaker, args);
+			return 1;
+		}
 	}
 	return 0;
 }
