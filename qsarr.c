@@ -11,13 +11,13 @@
 /*------------------------------------------------------------------------------------------------ */
 
 struct QSArr {
-	void	**data;
-	int	size, alloc;
-	int	frozen;
-	int	dirty : 1;
+	void		**data;
+	int		size, alloc;
+	int		frozen;
+	unsigned int	dirty : 1;
 
-	int	(*cmp_sort)(const void **e1, const void **e2);
-	int	(*cmp_key)(const void *e, const void *key);
+	int		(*cmp_sort)(const void **e1, const void **e2);
+	int		(*cmp_key)(const void *e, const void *key);
 };
 
 /*------------------------------------------------------------------------------------------------ */
