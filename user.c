@@ -6,9 +6,10 @@
 #include <string.h>
 
 #include "chat2.h"
+#include "channel.h"
+#include "qsarr.h"
 
 #include "user.h"
-#include "qsarr.h"
 
 /*------------------------------------------------------------------------------------------------ */
 
@@ -50,6 +51,20 @@ void user_ctor(User *user, const char *name)
 		return;
 	snprintf(user->name, sizeof user->name, "%s", name);
 	qsarr_insert(UserInfo.users, user);
+}
+
+void user_destroy(User *user)
+{
+	int	i;
+	Channel	*ch;
+
+	if(user == NULL)
+		return;
+	/* Reverse look-up this user in all channels; this is not totally nice. :/ */
+	for(i = 0; (ch = channel_index(i)) != NULL; i++)
+		channel_user_remove(ch, user);
+	qsarr_remove(UserInfo.users, user);
+	free(user);		/* Happily assume this frees the entire struct. */
 }
 
 const char * user_get_name(const User *user)
