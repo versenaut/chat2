@@ -12,7 +12,7 @@ typedef struct {
 	uint16	group_id;
 	uint16	method_id;
 	Node	*node;
-} UserClient;
+} UserVerse;
 
 extern User *	user_verse_new(const char *name, VNodeID node_id, uint16 group_id, uint16 method_id);
 
