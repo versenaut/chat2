@@ -11,8 +11,11 @@
 #include <string.h>
 
 #ifdef _WIN32
+#include <windows.h>
 #include "winsock2.h"
 #define	snprintf	_snprintf
+#else
+#include <unistd.h>
 #endif
 
 #include "verse.h"
