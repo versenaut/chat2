@@ -62,8 +62,9 @@ const char * user_get_name(const User *user)
 int user_set_name(User *user, const char *name)
 {
 	if(user == NULL || name == NULL)
-		return;
+		return 0;
 	snprintf(user->name, sizeof user->name, "%s", name);
+	return 1;
 }
 
 size_t user_count(void)
