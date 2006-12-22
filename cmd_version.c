@@ -13,7 +13,7 @@ int cmd_version(Channel *channel, User *speaker, const char *text)
 {
 	char	buf[256];
 
-	snprintf(buf, sizeof buf, "%s", VERSION);
+	snprintf(buf, sizeof buf, "/version %s", VERSION);
 	user_hear(speaker, "", NULL, buf);
 
 	return 1;
