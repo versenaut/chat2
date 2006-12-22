@@ -188,6 +188,14 @@ static void cb_node_name_set(void *user, VNodeID node_id, const char *name)
 		nodedb_set_name(n, name);
 }
 
+static void cb_node_destroy(void *user, VNodeID node_id)
+{
+	User	*u;
+
+	if((u = user_verse_from_node_id(node_id)) != NULL)
+		user_destroy(u);
+}
+
 static void cb_node_create(void *user, VNodeID node_id, VNodeType type, VNodeOwner owner)
 {
 	MainInfo	*min = user;
@@ -241,6 +249,7 @@ int main(int argc, char *argv[])
 
 	verse_callback_set((void *) verse_send_connect_accept,		(void *) cb_connect_accept,		&min);
 	verse_callback_set((void *) verse_send_node_create,		(void *) cb_node_create,		&min);
+	verse_callback_set((void *) verse_send_node_destroy,		(void *) cb_node_destroy,		&min);
 	verse_callback_set((void *) verse_send_node_name_set,		(void *) cb_node_name_set,		&min);
 	verse_callback_set((void *) verse_send_o_method_group_create,	(void *) cb_o_method_group_create,	&min);
 	verse_callback_set((void *) verse_send_o_method_create,		(void *) cb_o_method_create,		&min);
