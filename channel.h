@@ -6,6 +6,8 @@
 
 typedef struct Channel	Channel;
 
+extern void		channel_init(void);
+
 extern Channel *	channel_default(void);
 
 extern Channel *	channel_new(const char *name);

@@ -15,6 +15,8 @@ struct User {
 	void	(*hear)(User *, const char *channel, const char *speaker, const char *text);
 };
 
+extern void		user_init(void);
+
 extern int		user_name_is_valid(const char *name);
 
 extern void		user_ctor(User *user, const char *name);
