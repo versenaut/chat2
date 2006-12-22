@@ -46,7 +46,7 @@ int cmd_listchan(Channel *channel, User *speaker, const char *text)
 	{
 		if(channel_is_default(ch))
 			continue;
-		snprintf(buf, sizeof buf, "/listchan: %s\n", channel_get_name(ch));
+		snprintf(buf, sizeof buf, "/listchan %s\n", channel_get_name(ch));
 		user_hear(speaker, "", NULL, buf);
 	}
 	return 1;
