@@ -2,8 +2,10 @@
 # Simple Makefile for building the chat v2 server and client.
 #
 
-CFLAGS=-I../verse -g -Wall
-LDFLAGS=-L../verse
+VERSE=../verse
+
+CFLAGS=-I$(VERSE) -Wall -g
+LDFLAGS=-L$(VERSE)
 LDLIBS=-lverse
 
 ALL=chatserv client
