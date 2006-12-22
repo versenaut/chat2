@@ -20,6 +20,8 @@
 #define	snprintf	_snprintf
 #endif
 
+#define	VERSION	"0.1"
+
 typedef struct {
 	const char	*ip;
 
@@ -214,6 +216,11 @@ int main(int argc, char *argv[])
 	{
 		if(strncmp(argv[i], "-ip=", 4) == 0)
 			min.ip = argv[i] + 4;
+		else if(strcmp(argv[i], "-version") == 0)
+		{
+			puts(VERSION);
+			return EXIT_SUCCESS;
+		}
 		else
 			fprintf(stderr, "chatserv: Ignoring argument \"%s\"\n", argv[i]);
 	}
@@ -222,6 +229,8 @@ int main(int argc, char *argv[])
 	command_init();
 	nodedb_init();
 	user_init();
+
+	printf("Verse Chat server, version %s\n", VERSION);
 
 	verse_callback_set((void *) verse_send_connect_accept,		(void *) cb_connect_accept,		&min);
 	verse_callback_set((void *) verse_send_node_create,		(void *) cb_node_create,		&min);
