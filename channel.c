@@ -171,6 +171,11 @@ int channel_user_remove(Channel *channel, User *user)
 	snprintf(buf, sizeof buf, "%s has left channel \"%s\"\n", user_get_name(user), channel->name);
 	channel_hear(channel, NULL, buf);
 
+	if(channel_size(channel) == 0)	/* Did channel become empty? Then destroy it. */
+	{
+		channel_destroy(channel);
+	}
+
 	return 1;
 }
 

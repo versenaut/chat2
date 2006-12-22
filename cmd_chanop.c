@@ -28,9 +28,7 @@ int cmd_leave(Channel *channel, User *speaker, const char *text)
 	{
 		if(channel_is_default(ch))
 			return 1;
-		channel_user_remove(ch, speaker);
-		if(channel_size(ch) == 0)
-			channel_destroy(ch);
+		channel_user_remove(ch, speaker);	/* Destroys channel if empty. */
 		return 1;
 	}
 	return 0;
