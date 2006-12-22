@@ -1,5 +1,5 @@
 #
-#
+# Simple Makefile for building the chat v2 server and client.
 #
 
 CFLAGS=-I../verse -g -Wall
