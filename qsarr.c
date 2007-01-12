@@ -13,12 +13,89 @@
 struct QSArr {
 	void		**data;
 	int		size, alloc;
+	size_t		offset;		/* Offset to string embedded in user element, for string mode. */
 	int		frozen;
-	unsigned int	dirty : 1;
+	unsigned int	dirty : 1;	/* Array was touched when frozen; resort needed on thaw. */
 
 	int		(*cmp_sort)(const void **e1, const void **e2);
 	int		(*cmp_key)(const void *e, const void *key);
 };
+
+/*------------------------------------------------------------------------------------------------ */
+
+#define	EL(i)		((char *) base + i * width)
+#define	EL_STACK	512
+
+/* A qsort() implementation, that passes a 'context' void pointer to the comparison callback.
+ * Adapted from the C code at <http://en.wikipedia.org/wiki/Quicksort>. Note that we need to
+ * store the 'pivot' element during the loop, which is what the <pe> provides a buffer for.
+*/
+static void q_sort(void *base,
+		   size_t left,
+		   size_t right,
+		   size_t width,
+		   int (*compare)(void *context, const void *a, const void *b),
+		   void *context,
+		   void *pe)
+{
+	size_t	l_hold = left, r_hold = right, pivot = left;
+
+	memcpy(pe, EL(pivot), width);
+	while(left < right)
+	{
+		while(compare(context, EL(right), pe) >= 0 && left < right)
+			right--;
+		if(left != right)
+		{
+			memcpy(EL(left), EL(right), width);
+			left++;
+		}
+		while(compare(context, EL(left), pe) <= 0 && left < right)
+			left++;
+		if(left != right)
+		{
+			memcpy(EL(right), EL(left), width);
+			right--;
+		}
+	}
+	memcpy(EL(left), pe, width);
+	pivot = left;
+	left = l_hold;
+	right = r_hold;
+	if(left < pivot)
+		q_sort(base, left, pivot - 1,  width, compare, context, pe);
+	if(right > pivot)
+		q_sort(base, pivot + 1, right, width, compare, context, pe);
+}
+
+int qsort_s(void *base,
+	     size_t num,
+	     size_t width,
+	     int (*compare)(void *context, const void *a, const void *b),	/* Should return a <=> b. */
+	     void *context)
+{
+	if(base == NULL || num < 2 || width == 0 || compare == NULL)
+		return 0;
+	/* Use buffer space on-stack for small(ish) elements, malloc() it for larger. */
+	if(width <= EL_STACK)
+	{
+		char	buffer[EL_STACK];
+
+		q_sort(base, 0, num - 1, width, compare, context, buffer);
+		return 1;
+	}
+	else
+	{
+		char	*buffer;
+
+		if((buffer = malloc(width)) != NULL)
+		{
+			q_sort(base, 0, num - 1, width, compare, context, buffer);
+			free(buffer);
+		}
+		return buffer != NULL;
+	}
+}
 
 /*------------------------------------------------------------------------------------------------ */
 
@@ -39,6 +116,16 @@ QSArr * qsarr_new(int (*cmp_sort)(const void **e1, const void **e2),
 	}
 	return qsa;
 }
+
+/*
+static int cmp_string_offset(void *context, const void **e1, const void **e2)
+{
+	const char	*s1 = *(char **) ((char *) e1 + ((QSArr *) context)->offset),
+			*s2 = *(char **) ((char *) e2 + ((QSArr *) context)->offset);
+
+	return strcmp(s1, s2);		  
+}
+*/
 
 void qsarr_destroy(QSArr *qsa)
 {
